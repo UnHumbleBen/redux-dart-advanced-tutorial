@@ -47,7 +47,7 @@ You may use a dedicated `status` field in your actions:
 
 Or you can define separate types for them:
 
-```js
+```json
 { type: 'FETCH_POSTS_REQUEST' }
 { type: 'FETCH_POSTS_FAILURE', error: 'Oops' }
 { type: 'FETCH_POSTS_SUCCESS', response: { ... } }
@@ -240,7 +240,7 @@ app, you'll also want to store pagination state like
 > show this approach, together with [normalizr](https://github.com/paularmstrong/normalizr)
 > to normalize the nested API responses. With this approach, your
 > state might look like this:
-> ```dart
+> ```js
 > {
 >   selectedSubreddit: 'frontend',
 >   entities: {
@@ -540,7 +540,7 @@ ThunkAction<AppState> fetchPosts(String subreddit) {
 
 How do we include the Redux Thunk middleware in the dispatch
 mechanism? We use the `middleware` argument of the
-[Store()](https://pub.dev/documentation/redux/latest/redux/Store/Store.html) constructor as showm below:
+[`Store()`](https://pub.dev/documentation/redux/latest/redux/Store/Store.html) constructor as showm below:
 
 `lib/src/store.dart`
 ```dart
@@ -735,5 +735,5 @@ source code discussed in this example.
 
 ## Next Steps
 
-Read [async_flow.md] to recap how async actions fit into Redux
+Read [Async Flow](async_flow.md) to recap how async actions fit into Redux
 flow.
