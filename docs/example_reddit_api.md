@@ -271,8 +271,6 @@ import 'package:redux_dart_advanced_tutorial/src/components/posts_item.dart';
 import 'package:redux_dart_advanced_tutorial/src/reducers.dart';
 part 'app.over_react.g.dart';
 
-const String AppPropsSelectedSubredditKey = 'AppProps.selectedSubreddit';
-
 @Factory()
 UiFactory<AppProps> App = _$App;
 
@@ -293,7 +291,8 @@ class AppComponent extends UiComponent2<AppProps> {
 
   @override
   void componentDidUpdate(Map prevProps, Map prevState, [snapshot]) {
-    if (props.selectedSubreddit != prevProps[AppPropsSelectedSubredditKey]) {
+    var tPrevProps = typedPropsFactory(prevProps);
+    if (props.selectedSubreddit != tPrevProps.selectedSubreddit) {
       props.dispatch(fetchPostsIfNeeded(props.selectedSubreddit));
     }
   }
