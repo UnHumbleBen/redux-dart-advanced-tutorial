@@ -2,17 +2,17 @@
 
 Without [middleware](middleware.md), Redux store only supports
 [synchronous data flow](https://github.com/UnHumbleBen/redux-dart-basic-tutorial#data-flow). This is what you get
-by default with [Store()](https://pub.dev/documentation/redux/latest/redux/Store/Store.html).
+by default with [`Store()`](https://pub.dev/documentation/redux/latest/redux/Store/Store.html).
 
-You may enhance [Store()](https://pub.dev/documentation/redux/latest/redux/Store/Store.html)
+You may enhance [`Store()`](https://pub.dev/documentation/redux/latest/redux/Store/Store.html)
 with `middleware`. It is not required, but it lets you
 [express asynchronous actions in a convenient way](async_actions.md).
 
-Asynchrnous middleware like
+Asynchronous middleware like
 [redux_thunk](https://pub.dartlang.org/packages/redux_thunk)
 or
 [redux_future](https://pub.dartlang.org/packages/redux_future)
-wraps the [Store](https://pub.dev/documentation/redux/latest/redux/Store-class.html)
+wraps the [`Store`](https://pub.dev/documentation/redux/latest/redux/Store-class.html)
 class and allows you to dispatch something other than actions,
 for example, functions or Futures. Any middleware you use can then
 interpret anything you dispatch, and in turn, can pass actions
