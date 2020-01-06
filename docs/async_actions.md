@@ -47,7 +47,7 @@ You may use a dedicated `status` field in your actions:
 
 Or you can define separate types for them:
 
-```json
+```js
 { type: 'FETCH_POSTS_REQUEST' }
 { type: 'FETCH_POSTS_FAILURE', error: 'Oops' }
 { type: 'FETCH_POSTS_SUCCESS', response: { ... } }
