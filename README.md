@@ -5,8 +5,8 @@ Redux application. In this walk through, we will explore how
 AJAX and routing fit into the picture.
 
 * [Async Actions](docs/async_actions.md)
-* [Async Flow](#async-flow)
-* [Middleware](#middleware)
-* [Usage with React Router](#usage-with-react-router)
+* [Async Flow](docs/async_flow.md)
+* [Middleware](docs/middleware.md)
+* [Usage with React Router](docs/usage_with_react_router.md)
 * [Example: Reddit API](docs/example_reddit_api.md)
-* [Next Steps](#next-steps)
+* [Next Steps](docs/next_steps.md)

@@ -73,6 +73,10 @@ class SelectSubreddit {
   String subreddit;
 
   SelectSubreddit({this.subreddit});
+
+  Map<String, dynamic> toJson() {
+    return {'type': 'SelectSubreddit', 'subreddit': subreddit};
+  }
 }
 ```
 
@@ -83,6 +87,10 @@ class InvalidateSubreddit {
   String subreddit;
 
   InvalidateSubreddit({this.subreddit});
+
+  Map<String, dynamic> toJson() {
+    return {'type': 'InvalidateSubreddit', 'subreddit': subreddit};
+  }
 }
 ```
 
@@ -99,6 +107,10 @@ class RequestPosts {
   String subreddit;
 
   RequestPosts({this.subreddit});
+
+  Map<String, dynamic> toJson() {
+    return {'type': 'RequestPosts', 'subreddit': subreddit};
+  }
 }
 ```
 
@@ -121,6 +133,15 @@ class ReceivePosts {
   DateTime recievedAt;
 
   ReceivePosts({this.subreddit, this.posts}) : recievedAt = DateTime.now();
+
+  Map<String, dynamic> toJson() {
+    return {
+      'type': 'ReceivePosts',
+      'subreddit': subreddit,
+      'posts': posts,
+      'recievedAt': recievedAt.toString(),
+    };
+  }
 }
 ```
 
@@ -290,10 +311,14 @@ class AppState {
 
   @override
   String toString() {
+    return toJson().toString();
+  }
+
+  Map<String, dynamic> toJson() {
     return {
       'selectedSubreddit': selectedSubreddit,
       'postsBySubreddit': postsBySubreddit,
-    }.toString();
+    };
   }
 }
 
@@ -312,12 +337,16 @@ class Posts {
 
   @override
   String toString() {
+    return toJson().toString();
+  }
+
+  Map<String, dynamic> toJson() {
     return {
       'isFetching': isFetching,
       'didInvalidate': didInvalidate,
-      'lastUpdated': lastUpdated,
+      'lastUpdated': lastUpdated.toString(),
       'items': items,
-    }.toString();
+    };
   }
 }
 
@@ -330,10 +359,7 @@ Reducer<String> selectedSubredditReducer =
 
 Posts invalidateSubredditReducer(Posts posts, InvalidateSubreddit action) {
   return Posts(
-    isFetching: posts.isFetching,
     didInvalidate: true,
-    lastUpdated: posts.lastUpdated,
-    items: posts.items,
   );
 }
 
@@ -341,8 +367,6 @@ Posts requestPostsReducer(Posts posts, RequestPosts action) {
   return Posts(
     isFetching: true,
     didInvalidate: false,
-    lastUpdated: posts.lastUpdated,
-    items: posts.items,
   );
 }
 
@@ -362,7 +386,7 @@ Reducer<Posts> postsReducer = combineReducers<Posts>([
 ]);
 
 Map<String, Posts> postsBySubredditReducer(Map<String, Posts> postsBySubreddit, dynamic action) {
-  if (action is InvalidateSubreddit || action is ReceivePosts || action is ReceivePosts) {
+  if (action is InvalidateSubreddit || action is RequestPosts || action is ReceivePosts) {
     return Map.from(postsBySubreddit)
       ..addEntries([MapEntry(action.subreddit, postsReducer(postsBySubreddit[action.subreddit], action))]);
   } else {
@@ -444,18 +468,30 @@ class SelectSubreddit {
   String subreddit;
 
   SelectSubreddit({this.subreddit});
+
+  Map<String, dynamic> toJson() {
+    return {'type': 'SelectSubreddit', 'subreddit': subreddit};
+  }
 }
 
 class InvalidateSubreddit {
   String subreddit;
 
   InvalidateSubreddit({this.subreddit});
+
+  Map<String, dynamic> toJson() {
+    return {'type': 'InvalidateSubreddit', 'subreddit': subreddit};
+  }
 }
 
 class RequestPosts {
   String subreddit;
 
   RequestPosts({this.subreddit});
+
+  Map<String, dynamic> toJson() {
+    return {'type': 'RequestPosts', 'subreddit': subreddit};
+  }
 }
 
 class ReceivePosts {
@@ -464,6 +500,15 @@ class ReceivePosts {
   DateTime recievedAt;
 
   ReceivePosts({this.subreddit, this.posts}) : recievedAt = DateTime.now();
+
+  Map<String, dynamic> toJson() {
+    return {
+      'type': 'ReceivePosts',
+      'subreddit': subreddit,
+      'posts': posts,
+      'recievedAt': recievedAt.toString(),
+    };
+  }
 }
 
 // Meet our first thunk action!
@@ -478,7 +523,6 @@ ThunkAction<AppState> fetchPosts(String subreddit) {
   return (Store<AppState> store) async {
     // First dispatch: the app state is updated to inform
     // that the API call is starting.
-
     store.dispatch(RequestPosts(subreddit: subreddit));
 
     var path = 'https://www.reddit.com/r/${subreddit}.json';
@@ -500,19 +544,30 @@ mechanism? We use the `middleware` argument of the
 
 `lib/src/store.dart`
 ```dart
+import 'package:over_react/over_react_redux.dart';
 import 'package:redux/redux.dart';
 import 'package:redux_dart_advanced_tutorial/src/reducers.dart';
-import 'package:redux_logging/redux_logging.dart';
+import 'package:redux_dev_tools/redux_dev_tools.dart';
 import 'package:redux_thunk/redux_thunk.dart';
 
-final store = Store<AppState>(
-  appStateReducer,
-  initialState: AppState(),
-  middleware: [
-    thunkMiddleware, // lets us dispatch() functions
-    LoggingMiddleware.printer(), // neat middleware that logs actions
-  ],
-);
+final PRODUCTION = false;
+
+final store = PRODUCTION
+    ? Store<AppState>(
+        appStateReducer,
+        initialState: AppState(),
+        middleware: [
+          thunkMiddleware, // lets us dispatch() functions
+        ],
+      )
+    : DevToolsStore<AppState>(
+        appStateReducer,
+        initialState: AppState(),
+        middleware: [
+          thunkMiddleware, // lets us dispatch() functions
+          overReactReduxDevToolsMiddleware // lets us use Redux DevTools browser extension
+        ],
+      );
 ```
 
 `web/main.dart`
@@ -546,18 +601,30 @@ class SelectSubreddit {
   String subreddit;
 
   SelectSubreddit({this.subreddit});
+
+  Map<String, dynamic> toJson() {
+    return {'type': 'SelectSubreddit', 'subreddit': subreddit};
+  }
 }
 
 class InvalidateSubreddit {
   String subreddit;
 
   InvalidateSubreddit({this.subreddit});
+
+  Map<String, dynamic> toJson() {
+    return {'type': 'InvalidateSubreddit', 'subreddit': subreddit};
+  }
 }
 
 class RequestPosts {
   String subreddit;
 
   RequestPosts({this.subreddit});
+
+  Map<String, dynamic> toJson() {
+    return {'type': 'RequestPosts', 'subreddit': subreddit};
+  }
 }
 
 class ReceivePosts {
@@ -566,6 +633,15 @@ class ReceivePosts {
   DateTime recievedAt;
 
   ReceivePosts({this.subreddit, this.posts}) : recievedAt = DateTime.now();
+
+  Map<String, dynamic> toJson() {
+    return {
+      'type': 'ReceivePosts',
+      'subreddit': subreddit,
+      'posts': posts,
+      'recievedAt': recievedAt.toString(),
+    };
+  }
 }
 
 ThunkAction<AppState> fetchPosts(String subreddit) {
@@ -625,7 +701,7 @@ void main() {
 }
 ```
 
-> __Note about Server Rendering>>
+> __Note about Server Rendering__
 >
 > Async actions are especially convenient for server
 > rendering. You can create a store, dispatch a single async
@@ -656,3 +732,8 @@ synchronous actions, so we won't discuss this in detail. See
 for an introduction into using Redux from OverReact components.
 See [Example: Reddit API](example_reddit_api.md) for the complete
 source code discussed in this example.
+
+## Next Steps
+
+Read [async_flow.md] to recap how async actions fit into Redux
+flow.
